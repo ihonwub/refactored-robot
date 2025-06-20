@@ -31,6 +31,7 @@ jobs:
             --values values/values.common.yaml \
             --values values/envs/${{ matrix.env }}.yaml \
             > /tmp/${BRANCH}/rollout.yaml
+            la -al
 
       - name: Commit rendered manifests to ${{ matrix.env }} branch
         run: |
@@ -44,6 +45,7 @@ jobs:
 
           # Copy and stage the rendered manifest
           cp /tmp/$BRANCH/rollout.yaml .
+          ls -al
           git add rollout.yaml
 
           # Only commit and push if there are changes
