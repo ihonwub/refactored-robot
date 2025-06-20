@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: rollout-appset
+  name: rollout-app-bootstrap
   namespace: openshift-gitops
 spec:
   destination:
