@@ -12,12 +12,7 @@ livenessProbe:
   initialDelaySeconds: 15
   periodSeconds: 20
 smokeTest:
-<<<<<<< HEAD:values/common.yaml
   enabled: false
-=======
-  enabled: true
-
->>>>>>> 81f5dda (clean: refactor to accomodate rendered manifest pattern):values/values.common.yaml
 revisionHistoryLimit: 2
 commonAnnotations:
   team: carbon
