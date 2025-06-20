@@ -117,17 +117,15 @@ spec:
     blueGreen:
       activeService: demorobo-rolloutdemo
       previewService: demorobo-rolloutdemo-preview
-      autoPromotionEnabled: false
-      # autoPromotionSeconds: 30
-      # scaleDownDelaySeconds: 300
-    #
+      autoPromotionEnabled: true
+      autoPromotionSeconds: 120
+      scaleDownDelaySeconds: 600
       prePromotionAnalysis:
         templates:
           - templateName: demorobo-rolloutdemo-smoke-test
         args:
           - name: route-host
             value: demorobo-rolloutdemo-preview-route-default.apps.e3c5k7g5w3o7p7w.5vc5.p1.openshiftapps.com
-    #
   template:
     metadata:
       labels:
@@ -136,7 +134,7 @@ spec:
     spec:
       containers:
         - name: rolloutdemo
-          image: "ghcr.io/ihonwub/curly-spork:50eef20394992c91b8afa299d7735f1bd9b15b88"
+          image: "ghcr.io/ihonwub/curly-spork:93a1a64264f4d7f0d75aa011d8d3405fe4f95415"
           imagePullPolicy: Always
           ports:
             - name: http
