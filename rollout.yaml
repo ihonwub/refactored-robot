@@ -134,7 +134,7 @@ spec:
     spec:
       containers:
         - name: rolloutdemo
-          image: "ghcr.io/ihonwub/curly-spork:d4e6b3e1436640c0f46bad709c9b3a03ad930fab"
+          image: "ghcr.io/ihonwub/curly-spork:50eef20394992c91b8afa299d7735f1bd9b15b88"
           imagePullPolicy: Always
           ports:
             - name: http
