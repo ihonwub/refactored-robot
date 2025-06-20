@@ -10,7 +10,7 @@ image:
 
 # Enable smoke tests in development
 smokeTest:
-  enabled: false
+  enabled: true
 
 # Keep more revision history for debugging
 revisionHistoryLimit: 3
