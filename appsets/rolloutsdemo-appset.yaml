@@ -6,7 +6,8 @@ metadata:
   namespace: openshift-gitops
 spec:
   goTemplate: true
-  goTemplateOptions: ["missingkey=error"]
+  goTemplateOptions:
+    - missingkey=error
   generators:
     - list:
         elements:
@@ -20,16 +21,19 @@ spec:
     metadata:
       name: rollout-{{.env}}
       labels:
-        environment: {{.env}}
+        environment:
+          "{ .env }": null
     spec:
       project: default
       source:
         repoURL: https://github.com/ihonwub/refactored-robot.git
-        targetRevision: {{.branch}}
-        path: .  # Root of the branch where rendered manifests are stored
+        targetRevision:
+          "{ .branch }": null
+        path: .
       destination:
         server: https://kubernetes.default.svc
-        namespace: {{.namespace}}
+        namespace:
+          "{ .namespace }": null
       syncPolicy:
         automated:
           prune: true
