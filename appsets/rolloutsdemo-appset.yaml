@@ -4,27 +4,65 @@ metadata:
   name: rollout-demo-environments
   namespace: openshift-gitops
 spec:
+  goTemplate: true
   generators:
     - list:
         elements:
           - env: dev
             branch: env/dev
             namespace: rollout-dev
+          - env: qa
+            branch: env/qa
+            namespace: rollout-qa
   template:
     metadata:
-      name: 'rollout-{{env}}'
+      name: rollout-{{ .env }}
+      labels:
+        environment: {{ .env }}
     spec:
       project: default
       source:
         repoURL: https://github.com/ihonwub/refactored-robot.git
-        targetRevision: '{{branch}}'
+        targetRevision: {{ .branch }}
         path: .
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{namespace}}'
+        namespace: {{ .namespace }}
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
         syncOptions:
           - CreateNamespace=true
+
+
+# apiVersion: argoproj.io/v1alpha1
+# kind: ApplicationSet
+# metadata:
+#   name: rollout-demo-environments
+#   namespace: openshift-gitops
+# spec:
+#   generators:
+#     - list:
+#         elements:
+#           - env: dev
+#             branch: env/dev
+#             namespace: rollout-dev
+#   template:
+#     metadata:
+#       name: 'rollout-{{env}}'
+#     spec:
+#       project: default
+#       source:
+#         repoURL: https://github.com/ihonwub/refactored-robot.git
+#         targetRevision: '{{branch}}'
+#         path: .
+#       destination:
+#         server: https://kubernetes.default.svc
+#         namespace: '{{namespace}}'
+#       syncPolicy:
+#         automated:
+#           prune: true
+#           selfHeal: true
+#         syncOptions:
+#           - CreateNamespace=true
