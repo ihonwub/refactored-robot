@@ -21,9 +21,9 @@ spec:
     blueGreen:
       activeService: {{ template "rolloutdemo.fullname" . }}
       previewService: {{ template "rolloutdemo.fullname" . }}-preview
-      autoPromotionEnabled: true 
-      autoPromotionSeconds: 30
-      scaleDownDelaySeconds: 300
+      autoPromotionEnabled: false
+      # autoPromotionSeconds: 30
+      # scaleDownDelaySeconds: 300
     # {{- if .Values.smokeTest.enabled }}
       prePromotionAnalysis:
         templates:
