@@ -22,8 +22,8 @@ spec:
       activeService: {{ template "rolloutdemo.fullname" . }}
       previewService: {{ template "rolloutdemo.fullname" . }}-preview
       autoPromotionEnabled: true
-      autoPromotionSeconds: 120
-      scaleDownDelaySeconds: 600
+      autoPromotionSeconds: 30
+      scaleDownDelaySeconds: 300
     {{- if .Values.smokeTest.enabled }}
       prePromotionAnalysis:
         templates:
