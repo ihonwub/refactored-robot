@@ -120,6 +120,12 @@ spec:
       autoPromotionEnabled: true 
       autoPromotionSeconds: 30
       scaleDownDelaySeconds: 300
+      prePromotionAnalysis:
+        templates:
+          - templateName: demorobo-rolloutdemo-smoke-test
+        args:
+          - name: route-host
+            value: demorobo-rolloutdemo-preview-route-default.apps.e3c5k7g5w3o7p7w.5vc5.p1.openshiftapps.com
   template:
     metadata:
       labels:
