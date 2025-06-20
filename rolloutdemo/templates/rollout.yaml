@@ -24,14 +24,14 @@ spec:
       autoPromotionEnabled: true 
       autoPromotionSeconds: 30
       scaleDownDelaySeconds: 300
-    {{- if .Values.smokeTest.enabled }}
+    # {{- if .Values.smokeTest.enabled }}
       prePromotionAnalysis:
         templates:
           - templateName: {{ template "rolloutdemo.fullname" . }}-smoke-test
         args:
           - name: route-host
             value: {{ include "rolloutdemo.previewRouteHost" . }}
-    {{- end }}
+    # {{- end }}
   template:
     metadata:
       labels:
