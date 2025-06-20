@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "rolloutdemo.fullname" . }}
+  labels:
+    app: {{ template "rolloutdemo.name" . }}
+    chart: {{ template "rolloutdemo.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "rolloutdemo.name" . }}
+    release: {{ .Release.Name }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "rolloutdemo.fullname" . }}-preview
+  labels:
+    app: {{ template "rolloutdemo.name" . }}
+    chart: {{ template "rolloutdemo.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "rolloutdemo.name" . }}
+    release: {{ .Release.Name }}

@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: hello-world
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - git:
+        repoURL: https://github.com/ihonwub/refactored-robot.git
+        revision: main
+        files:
+          - path: env-config/**/config.json
+  template:
+    metadata:
+      name: '{{.env}}-rollout-demo'
+    spec:
+      project: default
+      sources:
+        - repoURL: https://github.com/ihonwub/refactored-robot.git
+          path: rolloutdemo
+          targetRevision: main
+          helm:
+            valueFiles:
+              - $values/values/common.yaml
+              - $values/values/app-version/{{.version}}.yaml
+              - $values/values/env-type/{{.type}}.yaml
+              - $values/values/envs/{{.env}}.yaml
+        - repoURL: https://github.com/ihonwub/refactored-robot.git
+          targetRevision: main
+          ref: values
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{.env}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

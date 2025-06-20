@@ -1,0 +1,50 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: {{ template "rolloutdemo.fullname" . }}-smoke-test
+  labels:
+    app.kubernetes.io/name: {{ template "rolloutdemo.fullname" . }}
+    helm.sh/chart: {{ include "rolloutdemo.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  args:
+    - name: route-host
+  metrics:
+    - name: smoke-test
+      provider:
+        job:
+          spec:
+            ttlSecondsAfterFinished: 300
+            backoffLimit: 2
+            template:
+              spec:
+                restartPolicy: Never
+                containers:
+                  - name: curl-test
+                    image: curlimages/curl:latest
+                    command:
+                      - sh
+                      - -c
+                      - |
+                        echo "Waiting for 30 seconds before starting the health check..."
+                        sleep 30  # Wait for the route to be available
+                        echo "Starting health check..."
+                        echo "Attempting to reach $ROUTE_HOST"
+                        
+                        for i in {1..3}; do
+                          echo "Attempt $i/3..."
+                          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -k --connect-timeout 5 --max-time 10 https://$ROUTE_HOST)
+                          echo "Status: $STATUS"
+                          if [ "$STATUS" = "200" ]; then
+                            echo "PASS"
+                            exit 0
+                          fi
+                          echo "Retrying in 5s..."
+                          sleep 5
+                        done
+                        echo "FAIL"
+                        exit 1
+                    env:
+                      - name: ROUTE_HOST
+                        value: "{{`{{args.route-host}}`}}"

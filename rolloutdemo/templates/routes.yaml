@@ -1,0 +1,32 @@
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ template "rolloutdemo.fullname" . }}
+  labels:
+    app: {{ template "rolloutdemo.name" . }}
+spec:
+  to:
+    kind: Service
+    name: {{ template "rolloutdemo.fullname" . }}
+  port:
+    targetPort: http
+  host: {{ include "hello-world.activeRouteHost" . }}
+  tls:
+    termination: edge
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ template "rolloutdemo.fullname" . }}-preview
+  labels:
+    app: {{ template "rolloutdemo.name" . }}
+spec:
+  to:
+    kind: Service
+    name: {{ template "rolloutdemo.fullname" . }}-preview
+  port:
+    targetPort: http
+  host: {{ include "hello-world.previewRouteHost" . }}
+  tls:
+    termination: edge

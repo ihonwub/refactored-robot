@@ -1,0 +1,6 @@
+{
+  "env": "qa",
+  "type": "non-prod",
+  "version": "dev",
+  "chart": "0.1.0"
+}
