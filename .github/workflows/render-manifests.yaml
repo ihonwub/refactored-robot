@@ -31,7 +31,7 @@ jobs:
             --values values/values.common.yaml \
             --values values/envs/${{ matrix.env }}.yaml \
             > /tmp/${BRANCH}/rollout.yaml
-            la -al
+          ls -al
 
       - name: Commit rendered manifests to ${{ matrix.env }} branch
         run: |
