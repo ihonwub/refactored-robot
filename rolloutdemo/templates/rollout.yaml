@@ -19,8 +19,8 @@ spec:
     unsuccessfulRunHistoryLimit: 1  
   strategy:
     blueGreen:
-      activeService: {{ template "rolloutdemo.fullname" . }}
-      previewService: {{ template "rolloutdemo.fullname" . }}-preview
+      activeService: {{ template "rolloutdemo.fullname" . }}-{{ .Release.Namespace }}
+      previewService: {{ template "rolloutdemo.fullname" . }}-preview-{{ .Release.Namespace }}
       autoPromotionEnabled: {{ .Values.rollout.strategy.blueGreen.autoPromotionEnabled }}
       autoPromotionSeconds: {{ .Values.rollout.strategy.blueGreen.autoPromotionSeconds }}
       scaleDownDelaySeconds: {{ .Values.rollout.strategy.blueGreen.scaleDownDelaySeconds }}

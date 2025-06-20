@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "rolloutdemo.fullname" . }}
+  name: {{ template "rolloutdemo.fullname" . }}-{{ .Release.Namespace }}
   labels:
     app: {{ template "rolloutdemo.name" . }}
     chart: {{ template "rolloutdemo.chart" . }}
@@ -22,7 +22,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "rolloutdemo.fullname" . }}-preview
+  name: {{ template "rolloutdemo.fullname" . }}-preview-{{ .Release.Namespace }}
   labels:
     app: {{ template "rolloutdemo.name" . }}
     chart: {{ template "rolloutdemo.chart" . }}
