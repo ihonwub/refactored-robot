@@ -4,6 +4,8 @@ metadata:
   name: rollout-demo-environments
   namespace: openshift-gitops
 spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
   generators:
     - list:
         elements:
