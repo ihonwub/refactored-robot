@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: demorobo-rolloutdemo
+  name: demorobo-rolloutdemo-default
   labels:
     app: rolloutdemo
     chart: rolloutdemo-0.1.0
@@ -24,7 +24,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: demorobo-rolloutdemo-preview
+  name: demorobo-rolloutdemo-preview-default
   labels:
     app: rolloutdemo
     chart: rolloutdemo-0.1.0
@@ -115,8 +115,8 @@ spec:
     unsuccessfulRunHistoryLimit: 1  
   strategy:
     blueGreen:
-      activeService: demorobo-rolloutdemo
-      previewService: demorobo-rolloutdemo-preview
+      activeService: demorobo-rolloutdemo-default
+      previewService: demorobo-rolloutdemo-preview-default
       autoPromotionEnabled: true
       autoPromotionSeconds: 30
       scaleDownDelaySeconds: 300
@@ -134,7 +134,7 @@ spec:
     spec:
       containers:
         - name: rolloutdemo
-          image: "ghcr.io/ihonwub/curly-spork:50eef20394992c91b8afa299d7735f1bd9b15b88"
+          image: "ghcr.io/ihonwub/curly-spork:d4e6b3e1436640c0f46bad709c9b3a03ad930fab"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -160,13 +160,13 @@ spec:
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: demorobo-rolloutdemo
+  name: demorobo-rolloutdemo-default
   labels:
     app: rolloutdemo
 spec:
   to:
     kind: Service
-    name: demorobo-rolloutdemo
+    name: demorobo-rolloutdemo-default
   port:
     targetPort: http
   host: demorobo-rolloutdemo-route-default.apps.e3c5k7g5w3o7p7w.5vc5.p1.openshiftapps.com
@@ -177,13 +177,13 @@ spec:
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: demorobo-rolloutdemo-preview
+  name: demorobo-rolloutdemo-preview-default
   labels:
     app: rolloutdemo
 spec:
   to:
     kind: Service
-    name: demorobo-rolloutdemo-preview
+    name: demorobo-rolloutdemo-preview-default
   port:
     targetPort: http
   host: demorobo-rolloutdemo-preview-route-default.apps.e3c5k7g5w3o7p7w.5vc5.p1.openshiftapps.com
