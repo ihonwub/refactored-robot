@@ -1,25 +1,19 @@
 replicaCount: 2
-
 image:
   repository: quay.io/openshiftdemos/rollouts-demo
-  tag: "blue"
+  tag: "5e21f252bd598fe26a38639fbd5336c4689e7bec"
   port: 8080
   pullPolicy: IfNotPresent
-
 service:
   port: 8080
   previewPort: 8081
   targetPort: 8080
-
 livenessProbe:
   initialDelaySeconds: 15
   periodSeconds: 20
-
 smokeTest:
   enabled: false
-
 revisionHistoryLimit: 2
 commonAnnotations:
   team: carbon
   project: t3aPaC
-
