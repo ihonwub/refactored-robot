@@ -1,7 +1,7 @@
 replicaCount: 2
 image:
   repository: quay.io/openshiftdemos/rollouts-demo
-  tag: "5e21f252bd598fe26a38639fbd5336c4689e7bec"
+  tag: "93a1a64264f4d7f0d75aa011d8d3405fe4f95415"
   port: 8080
   pullPolicy: IfNotPresent
 service:
