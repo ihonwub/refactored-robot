@@ -11,24 +11,30 @@ spec:
     - list:
         elements:
           - env: dev
-            branch: main
-          # - env: qa
-          #   branch: env/qa
+            branch: env/dev
+            namespace: rollout-dev
+          - env: qa
+            branch: env/qa
+            namespace: rollout-qa
   template:
     metadata:
       name: rollout-{{.env}}
+      labels:
+        environment: {{.env}}
     spec:
       project: default
       source:
         repoURL: https://github.com/ihonwub/refactored-robot.git
-        targetRevision: main
-        path: .
+        targetRevision: {{.branch}}
+        path: .  # Root of the branch where rendered manifests are stored
       destination:
         server: https://kubernetes.default.svc
-        namespace: {{.env}}
+        namespace: {{.namespace}}
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
         syncOptions:
           - CreateNamespace=true
+          - PrunePropagationPolicy=foreground
+          - PruneLast=true
