@@ -1,17 +1,20 @@
+# app-of-apps.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: rollou-demo-app
+  name: rollout-appset
   namespace: openshift-gitops
 spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: openshift-gitops
   project: default
   source:
     repoURL: https://github.com/ihonwub/refactored-robot.git
     targetRevision: main
-    path: appsets
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: openshift-gitops
+    path: appsets  # <- where the ApplicationSet YAML lives
+    directory:
+      recurse: true
   syncPolicy:
     automated:
       prune: true
