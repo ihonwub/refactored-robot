@@ -29,7 +29,7 @@ jobs:
 
           helm template rolloutdemo/ \
             --values values/values.common.yaml \
-            --values values/values/envs/${{ matrix.env }}.yaml \
+            --values values/envs/${{ matrix.env }}.yaml \
             > /tmp/${BRANCH}/rollout.yaml
 
       - name: Commit rendered manifests to ${{ matrix.env }} branch
