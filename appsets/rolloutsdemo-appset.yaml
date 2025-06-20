@@ -16,7 +16,7 @@ spec:
       project: default
       source:
         repoURL: https://github.com/ihonwub/refactored-robot.git
-        targetRevision: main  # Fixed branch for testing
+        targetRevision: env/dev  # Fixed branch for testing
         path: .
       destination:
         server: https://kubernetes.default.svc
