@@ -128,7 +128,7 @@ spec:
     spec:
       containers:
         - name: rolloutdemo
-          image: "ghcr.io/ihonwub/refactored-robot:93a1a64264f4d7f0d75aa011d8d3405fe4f95415"
+          image: "ghcr.io/ihonwub/refactored-robot:50eef20394992c91b8afa299d7735f1bd9b15b88"
           imagePullPolicy: Always
           ports:
             - name: http
