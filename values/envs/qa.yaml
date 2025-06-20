@@ -37,14 +37,14 @@ readinessProbe:
   initialDelaySeconds: 15  # Longer initial delay
   periodSeconds: 5         # More frequent checks
 
-# QA-specific annotations
-commonAnnotations:
-  team: carbon
-  project: t3aPaC
-  environment: qa
+# # QA-specific annotations
+# commonAnnotations:
+#   team: carbon
+#   project: t3aPaC
+#   environment: qa
 
-# QA-specific labels
-podLabels:
-  environment: qa
-  tier: testing
-  quality-gate: enabled
+# # QA-specific labels
+# podLabels:
+#   environment: qa
+#   tier: testing
+#   quality-gate: enabled

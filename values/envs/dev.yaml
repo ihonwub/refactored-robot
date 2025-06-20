@@ -32,13 +32,13 @@ resources:
     cpu: 100m
     memory: 128Mi
 
-# Development-specific annotations
-commonAnnotations:
-  team: carbon
-  project: t3aPaC
-  environment: dev
+# # Development-specific annotations
+# commonAnnotations:
+#   team: carbon
+#   project: t3aPaC
+#   environment: dev
 
-# Development-specific labels for pods
-podLabels:
-  environment: dev
-  tier: development
+# # Development-specific labels for pods
+# podLabels:
+#   environment: dev
+#   tier: development

@@ -9,7 +9,7 @@ metadata:
     heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
-  revisionHistoryLimit: 3
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
   selector:
     matchLabels:
       app: {{ template "rolloutdemo.name" . }}
@@ -21,9 +21,9 @@ spec:
     blueGreen:
       activeService: {{ template "rolloutdemo.fullname" . }}
       previewService: {{ template "rolloutdemo.fullname" . }}-preview
-      autoPromotionEnabled: true
-      autoPromotionSeconds: 30
-      scaleDownDelaySeconds: 300
+      autoPromotionEnabled: {{ .Values.rollout.strategy.blueGreen.autoPromotionEnabled }}
+      autoPromotionSeconds: {{ .Values.rollout.strategy.blueGreen.autoPromotionSeconds }}
+      scaleDownDelaySeconds: {{ .Values.rollout.strategy.blueGreen.scaleDownDelaySeconds }}
     {{- if .Values.smokeTest.enabled }}
       prePromotionAnalysis:
         templates:

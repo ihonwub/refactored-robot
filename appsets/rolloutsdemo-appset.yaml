@@ -8,15 +8,26 @@ spec:
     - list:
         elements:
           - env: dev
+            branch: env/dev
             namespace: rollout-dev
+            cluster: default
+            appName: rollout-dev
+          - env: qa
+            branch: env/qa  
+            namespace: rollout-qa
+            cluster: default
+            appName: rollout-qa
   template:
     metadata:
-      name: 'rollout-{{env}}'
+      name: '{{appName}}'
+      labels:
+        environment: '{{env}}'
+        managed-by: applicationset
     spec:
       project: default
       source:
         repoURL: https://github.com/ihonwub/refactored-robot.git
-        targetRevision: env/dev  # Fixed branch for testing
+        targetRevision: '{{branch}}'
         path: .
       destination:
         server: https://kubernetes.default.svc
@@ -27,6 +38,8 @@ spec:
           selfHeal: true
         syncOptions:
           - CreateNamespace=true
+          - PrunePropagationPolicy=foreground
+          - PruneLast=true
 
 
 # apiVersion: argoproj.io/v1alpha1
