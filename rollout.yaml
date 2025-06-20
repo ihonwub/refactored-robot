@@ -3,11 +3,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: release-name-rolloutdemo
+  name: demorobo-rolloutdemo
   labels:
     app: rolloutdemo
     chart: rolloutdemo-0.1.0
-    release: release-name
+    release: demorobo
     heritage: Helm
 spec:
   type: ClusterIP
@@ -18,17 +18,17 @@ spec:
       name: http
   selector:
     app: rolloutdemo
-    release: release-name
+    release: demorobo
 ---
 # Source: rolloutdemo/templates/services.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: release-name-rolloutdemo-preview
+  name: demorobo-rolloutdemo-preview
   labels:
     app: rolloutdemo
     chart: rolloutdemo-0.1.0
-    release: release-name
+    release: demorobo
     heritage: Helm
 spec:
   type: ClusterIP
@@ -39,17 +39,17 @@ spec:
       name: http
   selector:
     app: rolloutdemo
-    release: release-name
+    release: demorobo
 ---
 # Source: rolloutdemo/templates/analysis-template.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
-  name: release-name-rolloutdemo-smoke-test
+  name: demorobo-rolloutdemo-smoke-test
   labels:
-    app.kubernetes.io/name: release-name-rolloutdemo
+    app.kubernetes.io/name: demorobo-rolloutdemo
     helm.sh/chart: rolloutdemo-0.1.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: demorobo
     app.kubernetes.io/managed-by: Helm
 spec:
   args:
@@ -97,11 +97,11 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: release-name-rolloutdemo
+  name: demorobo-rolloutdemo
   labels:
     app: rolloutdemo
     chart: rolloutdemo-0.1.0
-    release: release-name
+    release: demorobo
     heritage: Helm
 spec:
   replicas: 1
@@ -109,28 +109,28 @@ spec:
   selector:
     matchLabels:
       app: rolloutdemo
-      release: release-name
+      release: demorobo
   analysis:
     successfulRunHistoryLimit: 2
     unsuccessfulRunHistoryLimit: 1  
   strategy:
     blueGreen:
-      activeService: release-name-rolloutdemo
-      previewService: release-name-rolloutdemo-preview
+      activeService: demorobo-rolloutdemo
+      previewService: demorobo-rolloutdemo-preview
       autoPromotionEnabled: true 
       autoPromotionSeconds: 30
       scaleDownDelaySeconds: 300
       prePromotionAnalysis:
         templates:
-          - templateName: release-name-rolloutdemo-smoke-test
+          - templateName: demorobo-rolloutdemo-smoke-test
         args:
           - name: route-host
-            value: release-name-rolloutdemo-preview-route-default.apps.e3c5k7g5w3o7p7w.5vc5.p1.openshiftapps.com
+            value: demorobo-rolloutdemo-preview-route-default.apps.e3c5k7g5w3o7p7w.5vc5.p1.openshiftapps.com
   template:
     metadata:
       labels:
         app: rolloutdemo
-        release: release-name
+        release: demorobo
     spec:
       containers:
         - name: rolloutdemo
@@ -155,16 +155,16 @@ spec:
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: release-name-rolloutdemo
+  name: demorobo-rolloutdemo
   labels:
     app: rolloutdemo
 spec:
   to:
     kind: Service
-    name: release-name-rolloutdemo
+    name: demorobo-rolloutdemo
   port:
     targetPort: http
-  host: release-name-rolloutdemo-route-default.apps.e3c5k7g5w3o7p7w.5vc5.p1.openshiftapps.com
+  host: demorobo-rolloutdemo-route-default.apps.e3c5k7g5w3o7p7w.5vc5.p1.openshiftapps.com
   tls:
     termination: edge
 ---
@@ -172,15 +172,15 @@ spec:
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: release-name-rolloutdemo-preview
+  name: demorobo-rolloutdemo-preview
   labels:
     app: rolloutdemo
 spec:
   to:
     kind: Service
-    name: release-name-rolloutdemo-preview
+    name: demorobo-rolloutdemo-preview
   port:
     targetPort: http
-  host: release-name-rolloutdemo-preview-route-default.apps.e3c5k7g5w3o7p7w.5vc5.p1.openshiftapps.com
+  host: demorobo-rolloutdemo-preview-route-default.apps.e3c5k7g5w3o7p7w.5vc5.p1.openshiftapps.com
   tls:
     termination: edge
