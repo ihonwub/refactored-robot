@@ -118,8 +118,8 @@ spec:
       activeService: demorobo-rolloutdemo
       previewService: demorobo-rolloutdemo-preview
       autoPromotionEnabled: true
-      autoPromotionSeconds: 120
-      scaleDownDelaySeconds: 600
+      autoPromotionSeconds: 30
+      scaleDownDelaySeconds: 300
       prePromotionAnalysis:
         templates:
           - templateName: demorobo-rolloutdemo-smoke-test
