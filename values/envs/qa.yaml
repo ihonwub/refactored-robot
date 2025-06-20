@@ -1,26 +1,50 @@
+# values/envs/qa.yaml - QA environment overrides
 clusterDomain: apps.e3c5k7g5w3o7p7w.5vc5.p1.openshiftapps.com
 
+# Production-like replica count
 replicaCount: 2
 
+# QA-specific image settings (stable pulls)
 image:
-  repository: quay.io/openshiftdemos/rollouts-demo
-  tag: "blue"
-  port: 8080
   pullPolicy: IfNotPresent
 
-service:
-  port: 8080
-  previewPort: 8081
-  targetPort: 8080
-
-livenessProbe:
-  initialDelaySeconds: 15
-  periodSeconds: 20
-
+# Enable smoke tests for QA validation
 smokeTest:
   enabled: true
 
-revisionHistoryLimit: 3
+# Keep more history for QA validation
+revisionHistoryLimit: 5
+
+# QA rollout strategy - automated but with validation
+rollout:
+  strategy:
+    blueGreen:
+      autoPromotionEnabled: true   # Auto-promote in QA
+      autoPromotionSeconds: 30     # Standard promotion time
+      scaleDownDelaySeconds: 300   # Standard cleanup time
+
+# Production-like resource allocation
+resources:
+  limits:
+    cpu: 300m
+    memory: 512Mi
+  requests:
+    cpu: 150m
+    memory: 256Mi
+
+# Stricter readiness probe for QA
+readinessProbe:
+  initialDelaySeconds: 15  # Longer initial delay
+  periodSeconds: 5         # More frequent checks
+
+# QA-specific annotations
 commonAnnotations:
   team: carbon
   project: t3aPaC
+  environment: qa
+
+# QA-specific labels
+podLabels:
+  environment: qa
+  tier: testing
+  quality-gate: enabled

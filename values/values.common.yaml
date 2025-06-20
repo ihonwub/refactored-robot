@@ -1,19 +1,51 @@
-replicaCount: 2
+# values/values.common.yaml - Base configuration for all environments
+replicaCount: 1
+
 image:
-  repository: quay.io/openshiftdemos/rollouts-demo
-  tag: "93a1a64264f4d7f0d75aa011d8d3405fe4f95415"
+  repository: ghcr.io/ihonwub/refactored-robot
+  tag: "93a1a64264f4d7f0d75aa011d8d3405fe4f95415"  # Will be updated by CI
   port: 8080
   pullPolicy: IfNotPresent
+
 service:
   port: 8080
   previewPort: 8081
   targetPort: 8080
+
 livenessProbe:
   initialDelaySeconds: 15
   periodSeconds: 20
+
+readinessProbe:
+  initialDelaySeconds: 10
+  periodSeconds: 10
+
 smokeTest:
   enabled: false
-revisionHistoryLimit: 2
+
+revisionHistoryLimit: 1
+
+# Default rollout strategy
+rollout:
+  strategy:
+    blueGreen:
+      autoPromotionEnabled: true
+      autoPromotionSeconds: 30
+      scaleDownDelaySeconds: 300
+
+# Common annotations applied to all environments
 commonAnnotations:
   team: carbon
   project: t3aPaC
+
+# Default resource limits (conservative)
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+# Default cluster domain (should be overridden per environment)
+clusterDomain: ""
