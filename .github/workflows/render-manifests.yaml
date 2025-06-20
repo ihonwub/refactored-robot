@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        env: [dev, qa]  # Add more if needed
+        env: [dev]  # Add more if needed
 
     steps:
       - name: Checkout code
@@ -41,15 +41,18 @@ jobs:
           if ! git checkout $BRANCH; then
             git checkout --orphan $BRANCH
             git rm -rf .
-          fi
-
-          # Copy and stage the rendered manifest
-          cp /tmp/$BRANCH/rollout.yaml .
-          ls -al
-          git add rollout.yaml
-
-          # Only commit and push if there are changes
-          if ! git diff --quiet; then
-            git commit -m "chore($BRANCH): sync from main - ${{ github.sha }}"
+            cp /tmp/$BRANCH/rollout.yaml .
+            git add rollout.yaml
+            git commit -m "${{ github.event.head_commit.message }}"
             git push --set-upstream origin $BRANCH --force
+          else
+            cp /tmp/$BRANCH/rollout.yaml .
           fi
+      - name: Deploy to ${{ matrix.env }}
+        run: |
+         if ! git diff --quiet HEAD; then
+              git add rollout.yaml
+              git commit -m "${{ github.event.head_commit.message }}"
+              git push --set-upstream origin $BRANCH --force
+         fi
+
