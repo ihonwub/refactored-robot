@@ -1,0 +1,53 @@
+name: Render and Push Helm Manifests
+
+on:
+  push:
+    branches:
+      - main  # Only render when main changes
+
+jobs:
+  render-manifests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        env: [dev, qa]  # Add more if needed
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.DEPLOY_PAT }}
+          fetch-depth: 0  # Required to push to other branches
+
+      - name: Set Git identity
+        uses: fregante/setup-git-user@v1
+
+      - name: Render Helm manifests for ${{ matrix.env }}
+        run: |
+          BRANCH=env/${{ matrix.env }}
+          mkdir -p /tmp/${BRANCH}
+
+          helm template rolloutdemo/ \
+            --values values/values.common.yaml \
+            --values values/values/envs/${{ matrix.env }}.yaml \
+            > /tmp/${BRANCH}/rollout.yaml
+
+      - name: Commit rendered manifests to ${{ matrix.env }} branch
+        run: |
+          BRANCH=env/${{ matrix.env }}
+
+          # Switch to the env branch (create if it doesn't exist)
+          if ! git checkout $BRANCH; then
+            git checkout --orphan $BRANCH
+            git rm -rf .
+          fi
+
+          # Copy and stage the rendered manifest
+          cp /tmp/$BRANCH/rollout.yaml .
+          git add rollout.yaml
+
+          # Only commit and push if there are changes
+          if ! git diff --quiet; then
+            git commit -m "chore($BRANCH): sync from main - ${{ github.sha }}"
+            git push --set-upstream origin $BRANCH --force
+          fi

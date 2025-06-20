@@ -30,7 +30,7 @@ spec:
           - templateName: {{ template "rolloutdemo.fullname" . }}-smoke-test
         args:
           - name: route-host
-            value: {{ include "hello-world.previewRouteHost" . }}
+            value: {{ include "rolloutdemo.previewRouteHost" . }}
     {{- end }}
   template:
     metadata:

@@ -65,14 +65,14 @@ Create the name of the service account to use
 {{/*
 Dynamically compute Route Host for for preview
 */}}
-{{- define "hello-world.previewRouteHost" -}}
-{{ printf "%s-preview-route-%s.%s" (include "hello-world.fullname" .) .Release.Namespace .Values.clusterDomain }}
+{{- define "rolloutdemo.previewRouteHost" -}}
+{{ printf "%s-preview-route-%s.%s" (include "rolloutdemo.fullname" .) .Release.Namespace .Values.clusterDomain }}
 {{- end }}
 
 
 {{/*
 Active route host
 */}}
-{{- define "hello-world.activeRouteHost" -}}
-{{ printf "%s-route-%s.%s" (include "hello-world.fullname" .) .Release.Namespace .Values.clusterDomain }}
+{{- define "rolloutdemo.activeRouteHost" -}}
+{{ printf "%s-route-%s.%s" (include "rolloutdemo.fullname" .) .Release.Namespace .Values.clusterDomain }}
 {{- end }}
