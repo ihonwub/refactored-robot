@@ -32,7 +32,7 @@ jobs:
           BRANCH=env/${{ matrix.env }}
           mkdir -p /tmp/${BRANCH}
 
-          helm template robo rolloutdemo/ \
+          helm template pac rolloutdemo/ \
             --namespace "${{ matrix.env }}" \
             --values values/values.common.yaml \
             --values values/envs/${{ matrix.env }}.yaml \
