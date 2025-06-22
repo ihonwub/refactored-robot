@@ -10,12 +10,10 @@ spec:
           - env: dev
             branch: env/dev
             namespace: rollout-dev
-            cluster: default
             appName: rollout-dev
           - env: qa
             branch: env/qa  
             namespace: rollout-qa
-            cluster: default
             appName: rollout-qa
   template:
     metadata:
