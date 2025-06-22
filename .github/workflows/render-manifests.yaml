@@ -33,6 +33,7 @@ jobs:
           mkdir -p /tmp/${BRANCH}
 
           helm template robo rolloutdemo/ \
+            --namespace "${{ matrix.env }}"
             --values values/values.common.yaml \
             --values values/envs/${{ matrix.env }}.yaml \
             > /tmp/${BRANCH}/rollout.yaml
