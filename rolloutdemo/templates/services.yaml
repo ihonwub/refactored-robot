@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "rolloutdemo.fullname" . }}-{{ .Release.Namespace }}
+  name: {{ template "rolloutdemo.fullname" . }}-active-{{ .Release.Namespace }}
   labels:
     app: {{ template "rolloutdemo.name" . }}
     chart: {{ template "rolloutdemo.chart" . }}

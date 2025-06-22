@@ -2,7 +2,7 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: {{ template "rolloutdemo.fullname" . }}-{{ .Release.Namespace }}
+  name: {{ template "rolloutdemo.fullname" . }}-active-{{ .Release.Namespace }}
   labels:
     app: {{ template "rolloutdemo.name" . }}
 spec:

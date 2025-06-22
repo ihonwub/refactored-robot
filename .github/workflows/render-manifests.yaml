@@ -22,6 +22,11 @@ jobs:
       - name: Set Git identity
         uses: fregante/setup-git-user@v1
 
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+          
       - name: Render Helm manifests for ${{ matrix.env }}
         run: |
           BRANCH=env/${{ matrix.env }}
@@ -31,7 +36,12 @@ jobs:
             --values values/values.common.yaml \
             --values values/envs/${{ matrix.env }}.yaml \
             > /tmp/${BRANCH}/rollout.yaml
-          ls -al
+          # Ensure the rendered file is valid YAML
+          if ! yq eval . /tmp/${BRANCH}/rollout.yaml; then
+            echo "Rendered manifest is not valid YAML"
+            exit 1
+          fi
+
 
       - name: Commit rendered manifests to ${{ matrix.env }} branch
         run: |
