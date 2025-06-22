@@ -38,7 +38,7 @@ jobs:
             --values values/envs/${{ matrix.env }}.yaml \
             > /tmp/${BRANCH}/rollout.yaml
           # Ensure the rendered file is valid YAML
-          if ! yq eval . /tmp/${BRANCH}/rollout.yaml; then
+          if ! yq eval . /tmp/${BRANCH}/rollout.yaml --debug; then
             echo "Rendered manifest is not valid YAML"
             exit 1
           fi
