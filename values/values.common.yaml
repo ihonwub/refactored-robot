@@ -2,7 +2,7 @@
 replicaCount: 1
 image:
   repository: ghcr.io/ihonwub/curly-spork
-  tag: "50eef20394992c91b8afa299d7735f1bd9b15b88" # Will be updated by CI
+  tag: "d4e6b3e1436640c0f46bad709c9b3a03ad930fab" # Will be updated by CI
   port: 8080
   pullPolicy: IfNotPresent
 service:
