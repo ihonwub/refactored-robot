@@ -33,6 +33,11 @@ argonewpass="password"
 argocd login --insecure --username ${argouser:=admin} --password ${argopass} --grpc-web ${argouri} | tee -a  ~/.status.log 
 argocd account --insecure update-password --insecure --current-password ${argopass} --new-password ${argonewpass} | tee -a  ~/.status.log 
 
+# Install Argo Rollouts Controller - https://argo-rollouts.readthedocs.io/en/stable/installation/#controller-installation
+kubectl create namespace argo-rollouts | tee -a  ~/.status.log 
+kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml | tee -a  ~/.status.log
+
+
 # Update Argo CD to use cluster-admin service account for sync operations in the "default" project
 kubectl apply -f .devcontainer/manifests/argo-configupdate.yaml | tee -a  ~/.status.log
 

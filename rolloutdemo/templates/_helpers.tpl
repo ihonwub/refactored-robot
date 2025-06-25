@@ -62,25 +62,18 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
-FOR OPENSHIFT ONLY - Lines 64 through 83 commented out
+FOR OPENSHIFT ONLY - COMMENTED OUT
 
-{{/*
-Dynamically compute Route Host for for preview
-*/}}
 {{- define "rolloutdemo.previewRouteHost" -}}
 {{ printf "%s-preview-route-%s.%s" (include "rolloutdemo.fullname" .) .Release.Namespace .Values.clusterDomain }}
 {{- end }}
 
-
-
-{{/*
-Active route host:
-*/}}
 {{- define "rolloutdemo.activeRouteHost" -}}
 {{ printf "%s-route-%s.%s" (include "rolloutdemo.fullname" .) .Release.Namespace .Values.clusterDomain }}
 {{- end }}
 
 */}}
+
 
 
 {{/*
