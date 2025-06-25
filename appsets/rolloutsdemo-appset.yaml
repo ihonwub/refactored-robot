@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
   name: rollout-demo-environments
-  namespace: argocd
+  namespace: openshift-gitops
 spec:
   generators:
     - list:
@@ -44,7 +44,7 @@ spec:
 # kind: ApplicationSet
 # metadata:
 #   name: rollout-demo-environments
-#   namespace: argocd
+#   namespace: openshift-gitops
 # spec:
 #   generators:
 #     - list:
