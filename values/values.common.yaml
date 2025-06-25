@@ -12,9 +12,13 @@ service:
 livenessProbe:
   initialDelaySeconds: 15
   periodSeconds: 20
+  failureThreshold: 6       # Fail only after 6 failures
+  timeoutSeconds: 2         # Wait 2 seconds for each response
 readinessProbe:
   initialDelaySeconds: 10
   periodSeconds: 10
+  failureThreshold: 6       # Fail only after 6 failures
+  timeoutSeconds: 2         # Wait 2 seconds for each response
 smokeTest:
   enabled: false
 revisionHistoryLimit: 1
