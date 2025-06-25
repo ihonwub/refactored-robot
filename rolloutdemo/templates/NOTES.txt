@@ -1,30 +1,36 @@
-{{/* 
+{{/*
   NOTES.txt is rendered and shown after a successful Helm install or upgrade.
-  This version is customized for OpenShift environments that use Route resources.
+  This version is customized for standard Kubernetes environments (not OpenShift),
+  and assumes your BlueGreen rollout uses separate Services for active and preview traffic.
 */}}
 
-1. Access your application routes in OpenShift:
+1. Access your application endpoints (in-cluster):
 
   {{/*
-    Set route name using the Helm release fullname helper.
-    Assumes the active Route is named "{{ fullname }}-route"
-    and the preview Route is named "{{ fullname }}-preview"
+    These assume your service is exposed internally within the cluster and
+    the service names follow the format:
+    - {{ fullname }}-active
+    - {{ fullname }}-preview
   */}}
 
-  Active Route:
-    export ACTIVE_ROUTE=$(oc get route -n {{ .Release.Namespace }} {{ include "rolloutdemo.fullname" . }} -o jsonpath='{.spec.host}')
-    echo "http://$ACTIVE_ROUTE"
+  Active Service:
+    echo "http://{{ include "rolloutdemo.fullname" . }}-active.{{ .Release.Namespace }}:{{ .Values.service.port }}"
+
+  Preview Service:
+    echo "http://{{ include "rolloutdemo.fullname" . }}-preview.{{ .Release.Namespace }}:{{ .Values.service.port }}"
 
   {{/*
-    Preview Route is typically used in BlueGreen deployments for pre-promotion testing.
-    Assumes the preview Route is named "{{ fullname }}-preview"
+    If you have Traefik or a LoadBalancer exposing these services externally,
+    you may replace these with the external hostname or port-forward commands.
   */}}
 
-  Preview Route:
-    export PREVIEW_ROUTE=$(oc get route -n {{ .Release.Namespace }} {{ include "rolloutdemo.fullname" . }}-preview -o jsonpath='{.spec.host}')
-    echo "http://$PREVIEW_ROUTE"
+2. To port-forward and access locally (example for preview):
+
+    kubectl port-forward svc/{{ include "rolloutdemo.fullname" . }}-preview -n {{ .Release.Namespace }} {{ .Values.service.port }}:{{ .Values.service.port }}
+
+    curl http://localhost:{{ .Values.service.port }}
 
   {{/*
-    These commands retrieve the external hostnames for the Route resources and output the full URLs.
-    Ensure the Routes exist and your rollout strategy is configured to create both.
+    Adjust as needed for your environment. If using Ingress or Gateway APIs,
+    you may also show how to retrieve the external host or DNS.
   */}}

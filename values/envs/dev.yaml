@@ -8,7 +8,7 @@ replicaCount: 2
 image:
   pullPolicy: Always  # Always pull latest in dev
   repository: ghcr.io/ihonwub/curly-spork
-  tag: "888f023850df847c5d949f5cd4d88385017e1075" # Will be updated by CI
+  tag: "6ef5a712e7e281197f7652c62cc8be3437ed721b" # Will be updated by CI
   
 # Enable smoke tests in development
 smokeTest:
