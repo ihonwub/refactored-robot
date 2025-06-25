@@ -80,12 +80,12 @@ FOR OPENSHIFT ONLY - COMMENTED OUT
 Preview service host – internal Kubernetes DNS
 */}}
 {{- define "rolloutdemo.previewRouteHost" -}}
-{{ printf "%s-preview.%s.svc.cluster.local" (include "rolloutdemo.fullname" .) .Release.Namespace }}
+{{ printf "%s-preview.%s:%d" (include "rolloutdemo.fullname" .) .Release.Namespace (.Values.service.port | int) }}
 {{- end }}
 
 {{/*
 Active service host – internal Kubernetes DNS
 */}}
 {{- define "rolloutdemo.activeRouteHost" -}}
-{{ printf "%s.%s.svc.cluster.local" (include "rolloutdemo.fullname" .) .Release.Namespace }}
+{{ printf "%s-preview.%s:%d" (include "rolloutdemo.fullname" .) .Release.Namespace (.Values.service.port | int) }}
 {{- end }}
