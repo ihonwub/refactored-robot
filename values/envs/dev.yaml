@@ -1,5 +1,5 @@
 # values/envs/dev.yaml - Development environment overrides
-clusterDomain: apps.e3c5k7g5w3o7p7w.5vc5.p1.openshiftapps.com
+# clusterDomain: apps.e3c5k7g5w3o7p7w.5vc5.p1.openshiftapps.com
 
 # Higher replica count for dev testing
 replicaCount: 2
@@ -7,7 +7,9 @@ replicaCount: 2
 # Development-specific image settings
 image:
   pullPolicy: Always  # Always pull latest in dev
-
+  repository: ghcr.io/ihonwub/curly-spork
+  tag: "888f023850df847c5d949f5cd4d88385017e1075" # Will be updated by CI
+  
 # Enable smoke tests in development
 smokeTest:
   enabled: true

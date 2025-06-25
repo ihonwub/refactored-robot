@@ -1,5 +1,5 @@
 # values/envs/qa.yaml - QA environment overrides
-clusterDomain: apps.e3c5k7g5w3o7p7w.5vc5.p1.openshiftapps.com
+# clusterDomain: apps.e3c5k7g5w3o7p7w.5vc5.p1.openshiftapps.com
 
 # Production-like replica count
 replicaCount: 2
