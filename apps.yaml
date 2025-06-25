@@ -3,11 +3,11 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: rollout-app-bootstrap
-  namespace: openshift-gitops
+  namespace: argocd
 spec:
   destination:
     server: https://kubernetes.default.svc
-    namespace: openshift-gitops
+    namespace: argocd
   project: default
   source:
     repoURL: https://github.com/ihonwub/refactored-robot.git
