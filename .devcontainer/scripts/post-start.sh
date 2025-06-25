@@ -33,6 +33,9 @@ argonewpass="password"
 argocd login --insecure --username ${argouser:=admin} --password ${argopass} --grpc-web ${argouri} | tee -a  ~/.status.log 
 argocd account --insecure update-password --insecure --current-password ${argopass} --new-password ${argonewpass} | tee -a  ~/.status.log 
 
+# Update Argo CD to use cluster-admin service account for sync operations in the "default" project
+kubectl apply -f .devcontainer/manifests/argo-configupdate.yaml | tee -a  ~/.status.log
+
 
 # NB: I expect this to fail when running locally, so I'm going to see what I get without it.
 # Patch URL value. Probably can do this via helm in the "post-create.sh" script. PRs are welcome
