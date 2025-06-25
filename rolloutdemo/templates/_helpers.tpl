@@ -61,6 +61,8 @@ Create the name of the service account to use
 {{- end }}
 {{- end }}
 
+{{/*
+FOR OPENSHIFT ONLY - Lines 64 through 83 commented out
 
 {{/*
 Dynamically compute Route Host for for preview
@@ -70,9 +72,27 @@ Dynamically compute Route Host for for preview
 {{- end }}
 
 
+
 {{/*
-Active route host
+Active route host:
 */}}
 {{- define "rolloutdemo.activeRouteHost" -}}
 {{ printf "%s-route-%s.%s" (include "rolloutdemo.fullname" .) .Release.Namespace .Values.clusterDomain }}
+{{- end }}
+
+*/}}
+
+
+{{/*
+Preview service host – internal Kubernetes DNS
+*/}}
+{{- define "rolloutdemo.previewRouteHost" -}}
+{{ printf "%s-preview.%s.svc.cluster.local" (include "rolloutdemo.fullname" .) .Release.Namespace }}
+{{- end }}
+
+{{/*
+Active service host – internal Kubernetes DNS
+*/}}
+{{- define "rolloutdemo.activeRouteHost" -}}
+{{ printf "%s.%s.svc.cluster.local" (include "rolloutdemo.fullname" .) .Release.Namespace }}
 {{- end }}
