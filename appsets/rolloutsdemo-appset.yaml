@@ -9,11 +9,11 @@ spec:
         elements:
           - env: dev
             branch: env/dev
-            namespace: rollout-dev
+            namespace: dev
             appName: rollout-dev
           - env: qa
             branch: env/qa  
-            namespace: rollout-qa
+            namespace: qa
             appName: rollout-qa
   template:
     metadata:
