@@ -8,10 +8,6 @@ replicaCount: 2
 image:
   pullPolicy: IfNotPresent
 
-# Enable smoke tests for QA validation
-smokeTest:
-  enabled: true
-
 # Keep more history for QA validation
 revisionHistoryLimit: 5
 
@@ -19,9 +15,12 @@ revisionHistoryLimit: 5
 rollout:
   strategy:
     blueGreen:
-      autoPromotionEnabled: true   # Auto-promote in QA
-      autoPromotionSeconds: 30     # Standard promotion time
-      scaleDownDelaySeconds: 300   # Standard cleanup time
+      enabled: true
+      autoPromotionEnabled: true
+      autoPromotionSeconds: 30
+
+smokeTest:
+  enabled: true
 
 # Production-like resource allocation
 resources:

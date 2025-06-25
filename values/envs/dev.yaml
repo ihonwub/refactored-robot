@@ -10,20 +10,20 @@ image:
   repository: ghcr.io/ihonwub/curly-spork
   tag: "50eef20394992c91b8afa299d7735f1bd9b15b88" # Will be updated by CI
   
-# Enable smoke tests in development
-smokeTest:
-  enabled: true
 
 # Keep more revision history for debugging
 revisionHistoryLimit: 3
 
-# Development rollout strategy - manual promotion for testing
 rollout:
   strategy:
     blueGreen:
-      autoPromotionEnabled: false  # Manual promotion in dev
-      autoPromotionSeconds: 60     # Longer wait time for manual testing
-      scaleDownDelaySeconds: 600   # Keep old version longer for comparison
+      enabled: false  # Use rolling update instead
+    rollingUpdate:
+      maxUnavailable: "50%"
+      maxSurge: "50%"
+
+smokeTest:
+  enabled: false  # No smoke tests for rolling update
 
 # Higher resource limits for dev testing
 resources:

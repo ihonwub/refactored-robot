@@ -22,13 +22,22 @@ readinessProbe:
 smokeTest:
   enabled: false
 revisionHistoryLimit: 1
+
 # Default rollout strategy
 rollout:
   strategy:
     blueGreen:
+      enabled: true  # Set to false for plain rolling update
       autoPromotionEnabled: true
       autoPromotionSeconds: 30
-      scaleDownDelaySeconds: 300
+      scaleDownDelaySeconds: 30
+    rollingUpdate:
+      maxUnavailable: "25%"
+      maxSurge: "25%"
+
+smokeTest:
+  enabled: true  # Only applies when blueGreen.enabled is true
+
 # Common annotations applied to all environments
 commonAnnotations:
   team: carbon

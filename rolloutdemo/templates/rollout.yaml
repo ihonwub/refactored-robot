@@ -17,6 +17,7 @@ spec:
   analysis:
     successfulRunHistoryLimit: 2
     unsuccessfulRunHistoryLimit: 1  
+  {{- if .Values.rollout.strategy.blueGreen.enabled }}
   strategy:
     blueGreen:
       activeService: {{ template "rolloutdemo.fullname" . }}-active-{{ .Release.Namespace }}
@@ -32,6 +33,12 @@ spec:
           - name: route-host
             value: {{ include "rolloutdemo.previewRouteHost" . }}
     {{- end }}
+  {{- else }}
+  strategy:
+    rollingUpdate:
+      maxUnavailable: {{ .Values.rollout.strategy.rollingUpdate.maxUnavailable | default "25%" }}
+      maxSurge: {{ .Values.rollout.strategy.rollingUpdate.maxSurge | default "25%" }}
+  {{- end }}
   template:
     metadata:
       labels:
