@@ -6,7 +6,7 @@ replicaCount: 3
 # Production-grade image settings
 image:
   pullPolicy: IfNotPresent
-  tag: 2016c01a723de701053811642d7fac45cf454b37
+  tag: be7d71650fa921b9136562988ee0b73588ffdf18
 # Keep extensive history for production rollbacks
 revisionHistoryLimit: 10
 # Production rollout strategy - manual promotion for safety
@@ -45,7 +45,6 @@ livenessProbe:
 #   project: t3aPaC
 #   environment: production
 #   criticality: high
-
 # # Production-specific labels  
 # podLabels:
 #   environment: production
