@@ -1,0 +1,193 @@
+---
+# Source: rolloutdemo/templates/services.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: pac-rolloutdemo-active-qa
+  labels:
+    app: rolloutdemo
+    chart: rolloutdemo-0.1.0
+    release: pac
+    heritage: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: rolloutdemo
+    release: pac
+---
+# Source: rolloutdemo/templates/services.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: pac-rolloutdemo-preview-qa
+  labels:
+    app: rolloutdemo
+    chart: rolloutdemo-0.1.0
+    release: pac
+    heritage: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: rolloutdemo
+    release: pac
+---
+# Source: rolloutdemo/templates/routes.yaml
+### FOR OPENSHIFT CLUSTERS ONLY ###
+# This file defines the routes for the RolloutDemo application. 
+# ---
+# apiVersion: route.openshift.io/v1
+# kind: Route
+# metadata:
+#   name: pac-rolloutdemo-active-qa
+#   labels:
+#     app: rolloutdemo
+# spec:
+#   to:
+#     kind: Service
+#     name: pac-rolloutdemo-qa
+#   port:
+#     targetPort: http
+#   host: pac-rolloutdemo-active-qa.qa.svc.cluster.local:8080
+#   tls:
+#     termination: edge
+# ---
+# apiVersion: route.openshift.io/v1
+# kind: Route
+# metadata:
+#   name: pac-rolloutdemo-preview-qa
+#   labels:
+#     app: rolloutdemo
+# spec:
+#   to:
+#     kind: Service
+#     name: pac-rolloutdemo-preview-qa
+#   port:
+#     targetPort: http
+#   host: pac-rolloutdemo-preview-qa.qa.svc.cluster.local:8080
+#   tls:
+#     termination: edge
+---
+# Source: rolloutdemo/templates/analysis-template.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: pac-rolloutdemo-smoke-test
+  labels:
+    app.kubernetes.io/name: pac-rolloutdemo
+    helm.sh/chart: rolloutdemo-0.1.0
+    app.kubernetes.io/instance: pac
+    app.kubernetes.io/managed-by: Helm
+spec:
+  args:
+    - name: route-host
+  metrics:
+    - name: smoke-test
+      provider:
+        job:
+          spec:
+            ttlSecondsAfterFinished: 300
+            backoffLimit: 2
+            template:
+              spec:
+                restartPolicy: Never
+                containers:
+                  - name: curl-test
+                    image: curlimages/curl:latest
+                    command:
+                      - sh
+                      - -c
+                      - |
+                        echo "Waiting for 10 seconds before starting the health check..."
+                        sleep 10  # Reduced wait time since service should be ready
+                        echo "Starting health check..."
+                        echo "Attempting to reach http://$ROUTE_HOST/"
+                        
+                        for i in {1..5}; do
+                          echo "Attempt $i/5..."
+                          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 --max-time 10 http://$ROUTE_HOST/)
+                          echo "Status: $STATUS"
+                          if [ "$STATUS" = "200" ]; then
+                            echo "PASS - Health check successful"
+                            exit 0
+                          fi
+                          echo "Retrying in 5s..."
+                          sleep 5
+                        done
+                        echo "FAIL - Health check failed after 5 attempts"
+                        exit 1
+                    env:
+                      - name: ROUTE_HOST
+                        value: "{{args.route-host}}"
+---
+# Source: rolloutdemo/templates/rollout.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: pac-rolloutdemo
+  labels:
+    app: rolloutdemo
+    chart: rolloutdemo-0.1.0
+    release: pac
+    heritage: Helm
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: rolloutdemo
+      release: pac
+  analysis:
+    successfulRunHistoryLimit: 2
+    unsuccessfulRunHistoryLimit: 1  
+  strategy:
+    blueGreen:
+      activeService: pac-rolloutdemo-active-qa
+      previewService: pac-rolloutdemo-preview-qa
+      autoPromotionEnabled: true
+      autoPromotionSeconds: 30
+      scaleDownDelaySeconds: 30
+      prePromotionAnalysis:
+        templates:
+          - templateName: pac-rolloutdemo-smoke-test
+        args:
+          - name: route-host
+            value: pac-rolloutdemo-preview-qa.qa.svc.cluster.local:8080
+  template:
+    metadata:
+      labels:
+        app: rolloutdemo
+        release: pac
+    spec:
+      containers:
+        - name: rolloutdemo
+          image: "ghcr.io/ihonwub/curly-spork:be7d71650fa921b9136562988ee0b73588ffdf18"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+          resources:
+            limits:
+              cpu: 300m
+              memory: 512Mi
+            requests:
+              cpu: 150m
+              memory: 256Mi
