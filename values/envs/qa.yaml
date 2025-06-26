@@ -3,14 +3,12 @@
 
 # Production-like replica count
 replicaCount: 2
-
 # QA-specific image settings (stable pulls)
 image:
   pullPolicy: IfNotPresent
-
+  tag: 4be784399af6f1d47228ce18e3fe998b42e508c1
 # Keep more history for QA validation
 revisionHistoryLimit: 5
-
 # QA rollout strategy - automated but with validation
 rollout:
   strategy:
@@ -18,10 +16,8 @@ rollout:
       enabled: true
       autoPromotionEnabled: true
       autoPromotionSeconds: 30
-
 smokeTest:
   enabled: true
-
 # Production-like resource allocation
 resources:
   limits:
@@ -30,12 +26,10 @@ resources:
   requests:
     cpu: 150m
     memory: 256Mi
-
 # Stricter readiness probe for QA
 readinessProbe:
-  initialDelaySeconds: 15  # Longer initial delay
-  periodSeconds: 5         # More frequent checks
-
+  initialDelaySeconds: 15 # Longer initial delay
+  periodSeconds: 5 # More frequent checks
 # # QA-specific annotations
 # commonAnnotations:
 #   team: carbon
