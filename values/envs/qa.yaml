@@ -6,7 +6,7 @@ replicaCount: 2
 # QA-specific image settings (stable pulls)
 image:
   pullPolicy: IfNotPresent
-  tag: 4be784399af6f1d47228ce18e3fe998b42e508c1
+  tag: 4a9c400d641aa1fd5ee1397c1d63d20f43f6aca4
 # Keep more history for QA validation
 revisionHistoryLimit: 5
 # QA rollout strategy - automated but with validation
@@ -35,7 +35,6 @@ readinessProbe:
 #   team: carbon
 #   project: t3aPaC
 #   environment: qa
-
 # # QA-specific labels
 # podLabels:
 #   environment: qa
