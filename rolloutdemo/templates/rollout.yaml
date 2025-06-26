@@ -37,13 +37,13 @@ spec:
     canary:
       steps:
       - setWeight: {{ .Values.rollout.strategy.canary.setWeight | default 20 }}
-      - pause: {}
+      - pause: { duration: {{ .Values.rollout.strategy.canary.pauseDuration | default "10s" }} }
       - setWeight: {{ .Values.rollout.strategy.canary.setWeight2 | default 40 }}
-      - pause: { duration: {{ .Values.rollout.strategy.canary.pauseDuration | default "30s" }} }
+      - pause: { duration: {{ .Values.rollout.strategy.canary.pauseDuration | default "10s" }} }
       - setWeight: {{ .Values.rollout.strategy.canary.setWeight3 | default 60 }}
-      - pause: { duration: {{ .Values.rollout.strategy.canary.pauseDuration | default "30s" }} }
+      - pause: { duration: {{ .Values.rollout.strategy.canary.pauseDuration | default "10s" }} }
       - setWeight: {{ .Values.rollout.strategy.canary.setWeight4 | default 80 }}
-      - pause: { duration: {{ .Values.rollout.strategy.canary.pauseDuration | default "30s" }} }
+      - pause: { duration: {{ .Values.rollout.strategy.canary.pauseDuration | default "10s" }} }
   {{- end }}
   template:
     metadata:
