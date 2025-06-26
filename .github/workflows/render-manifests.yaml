@@ -1,9 +1,20 @@
+# .github/workflows/render-manifests.yml
 name: Render and Push Helm Manifests
-
 on:
   push:
     branches:
-      - main  # Only render when main changes
+      - main
+    paths:
+      - 'rolloutdemo/**'    # Chart/template changes only
+      - 'values/values.common.yaml'  # Common values changes
+      - 'Chart.yaml'
+  workflow_run:
+    workflows: ["Promote Image Changes"]
+    types:
+      - completed
+    branches:
+      - main
+
 
 jobs:
   render-manifests:
