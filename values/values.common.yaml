@@ -2,7 +2,7 @@
 replicaCount: 1
 image:
   repository: ghcr.io/ihonwub/curly-spork
-  tag: "888f023850df847c5d949f5cd4d88385017e1075" # Will be updated by CI
+  tag: "4be784399af6f1d47228ce18e3fe998b42e508c1" # Will be updated by CI
   port: 8080
   pullPolicy: IfNotPresent
 service:
@@ -12,21 +12,20 @@ service:
 livenessProbe:
   initialDelaySeconds: 15
   periodSeconds: 20
-  failureThreshold: 6       # Fail only after 6 failures
-  timeoutSeconds: 2         # Wait 2 seconds for each response
+  failureThreshold: 6 # Fail only after 6 failures
+  timeoutSeconds: 2 # Wait 2 seconds for each response
 readinessProbe:
   initialDelaySeconds: 10
   periodSeconds: 10
-  failureThreshold: 6       # Fail only after 6 failures
-  timeoutSeconds: 2         # Wait 2 seconds for each response
+  failureThreshold: 6 # Fail only after 6 failures
+  timeoutSeconds: 2 # Wait 2 seconds for each response
 smokeTest:
   enabled: false
 revisionHistoryLimit: 1
-
 rollout:
   strategy:
     blueGreen:
-      enabled: true  # Set to false for canary deployment
+      enabled: true # Set to false for canary deployment
       autoPromotionEnabled: true
       autoPromotionSeconds: 30
       scaleDownDelaySeconds: 30
@@ -36,10 +35,8 @@ rollout:
       setWeight3: 60
       setWeight4: 80
       pauseDuration: "30s"
-
 smokeTest:
-  enabled: true  # Only applies when blueGreen.enabled is true
-
+  enabled: true # Only applies when blueGreen.enabled is true
 # Common annotations applied to all environments
 commonAnnotations:
   team: carbon
