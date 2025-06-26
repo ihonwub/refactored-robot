@@ -3,26 +3,22 @@
 
 # Production replica count for high availability
 replicaCount: 3
-
 # Production-grade image settings
 image:
   pullPolicy: IfNotPresent
-
+  tag: 2016c01a723de701053811642d7fac45cf454b37
 # Keep extensive history for production rollbacks
 revisionHistoryLimit: 10
-
 # Production rollout strategy - manual promotion for safety
 rollout:
   strategy:
     blueGreen:
       enabled: true
-      autoPromotionEnabled: false    # Manual promotion required
-      autoPromotionSeconds: 0        # No auto-promotion
-      scaleDownDelaySeconds: 300     # 5 minute delay before scaling down old version
-
+      autoPromotionEnabled: false # Manual promotion required
+      autoPromotionSeconds: 0 # No auto-promotion
+      scaleDownDelaySeconds: 300 # 5 minute delay before scaling down old version
 smokeTest:
   enabled: true
-
 # Production-grade resource allocation
 resources:
   limits:
@@ -31,21 +27,18 @@ resources:
   requests:
     cpu: 200m
     memory: 512Mi
-
 # Conservative readiness probe for production stability
 readinessProbe:
-  initialDelaySeconds: 20    # Extra time for production startup
-  periodSeconds: 10          # Less frequent checks to reduce load
+  initialDelaySeconds: 20 # Extra time for production startup
+  periodSeconds: 10 # Less frequent checks to reduce load
   timeoutSeconds: 5
   failureThreshold: 3
-
 # Production liveness probe
 livenessProbe:
-  initialDelaySeconds: 30    # Give app time to fully initialize
-  periodSeconds: 30          # Less frequent checks
+  initialDelaySeconds: 30 # Give app time to fully initialize
+  periodSeconds: 30 # Less frequent checks
   timeoutSeconds: 10
   failureThreshold: 3
-
 # # Production-specific annotations
 # commonAnnotations:
 #   team: carbon
