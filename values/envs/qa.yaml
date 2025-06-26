@@ -6,7 +6,7 @@ replicaCount: 2
 # QA-specific image settings (stable pulls)
 image:
   pullPolicy: IfNotPresent
-  tag: 888d8d8a7e14fb863f35734d07c798848031b874
+  tag: dd8f160ea514c068a1d6273ba69a57ccc6deaba2
 # Keep more history for QA validation
 revisionHistoryLimit: 5
 # QA rollout strategy - automated but with validation
