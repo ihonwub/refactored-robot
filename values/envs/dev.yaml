@@ -7,7 +7,7 @@ replicaCount: 2
 image:
   pullPolicy: Always # Always pull latest in dev
   repository: ghcr.io/ihonwub/curly-spork
-  tag: "f1dce09c362d359963e273ae9196be6b3bb5a99d" # Will be updated by CI
+  tag: "262f943cbdb58f1b9486d885c0bfb3b1eb1796f9" # Will be updated by CI
 # Keep more revision history for debugging
 revisionHistoryLimit: 3
 rollout:
@@ -32,7 +32,6 @@ resources:
 #   team: carbon
 #   project: t3aPaC
 #   environment: dev
-
 # # Development-specific labels for pods
 # podLabels:
 #   environment: dev
