@@ -36,9 +36,9 @@ jobs:
             --namespace "${{ matrix.env }}" \
             --values values/values.common.yaml \
             --values values/envs/${{ matrix.env }}.yaml \
-            > /tmp/${BRANCH}/rollout.yaml
+            > /tmp/${BRANCH}/rendered-manifests.yaml
           # Ensure the rendered file is valid YAML
-          if ! yq eval . /tmp/${BRANCH}/rollout.yaml; then
+          if ! yq eval . /tmp/${BRANCH}/rendered-manifests.yaml; then
             echo "Rendered manifest is not valid YAML"
             exit 1
           fi
@@ -52,17 +52,17 @@ jobs:
           if ! git checkout $BRANCH; then
             git checkout --orphan $BRANCH
             git rm -rf .
-            cp /tmp/$BRANCH/rollout.yaml .
-            git add rollout.yaml
+            cp /tmp/$BRANCH/rendered-manifests.yaml .
+            git add rendered-manifests.yaml
             git commit -m "${{ github.event.head_commit.message }}"
             git push --set-upstream origin $BRANCH --force
           else
-            cp /tmp/$BRANCH/rollout.yaml .
+            cp /tmp/$BRANCH/rendered-manifests.yaml .
           fi
       - name: Deploy to ${{ matrix.env }}
         run: |
          if ! git diff --quiet HEAD; then
-              git add rollout.yaml
+              git add rendered-manifests.yaml
               git commit -m "${{ github.event.head_commit.message }}"
               git push --set-upstream origin $BRANCH --force
          fi

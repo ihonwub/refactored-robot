@@ -15,6 +15,10 @@ spec:
             branch: env/qa  
             namespace: qa
             appName: rollout-qa
+          - env: prod
+            branch: env/qa  
+            namespace: prod
+            appName: rollout-prod
   template:
     metadata:
       name: '{{appName}}'
