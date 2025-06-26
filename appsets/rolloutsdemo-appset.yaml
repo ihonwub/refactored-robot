@@ -16,7 +16,7 @@ spec:
             namespace: qa
             appName: rollout-qa
           - env: prod
-            branch: env/qa  
+            branch: env/prod  
             namespace: prod
             appName: rollout-prod
   template:
