@@ -1,0 +1,71 @@
+# .github/workflows/promote-images.yml
+name: Promote Image Changes
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'values/envs/dev.yaml'  # Only trigger on dev value changes (from curly-spork CI)
+
+jobs:
+  promote-image-change:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.DEPLOY_PAT }}
+          fetch-depth: 0
+      
+      - name: Fetch Metadata
+        run: git fetch origin "refs/notes/*:refs/notes/*"
+      
+      - name: Get Commit Metadata
+        id: commit-metadata
+        run: |
+          pat='image: (.*)'; [[ "$(git notes show)" =~ $pat ]] && echo "IMAGE=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT || echo ''
+          pat='env: (.*)'; [[ "$(git notes show)" =~ $pat ]] && echo "ENV=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT || echo ''
+
+      - uses: fregante/setup-git-user@v1
+        if: ${{ steps.commit-metadata.outputs.IMAGE }}
+
+      - name: Install yq
+        if: ${{ steps.commit-metadata.outputs.IMAGE }}
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+      
+      - name: Promote Image Change
+        if: ${{ steps.commit-metadata.outputs.IMAGE }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          IMAGE=${{ steps.commit-metadata.outputs.IMAGE }}
+          ENV="${{ steps.commit-metadata.outputs.ENV || 'dev' }}"
+          
+          if [ $ENV == "dev" ]; then
+            echo "🚀 Promoting $IMAGE from dev to qa"
+            # Update qa values file
+            yq eval '.image.tag = "'$(echo $IMAGE | cut -d':' -f2)'"' -i values/envs/qa.yaml
+            git add values/envs/qa.yaml
+            git commit -m "chore(qa): promote to $IMAGE"
+            git notes append -m "image: $IMAGE"
+            git notes append -m "env: qa"
+            git push origin "refs/notes/*" --force && git push origin main
+            
+          elif [ $ENV == "qa" ]; then
+            echo "📋 Creating PR to promote $IMAGE from qa to prod"
+            git checkout -b auto-promote-prod
+            # Update prod values file  
+            yq eval '.image.tag = "'$(echo $IMAGE | cut -d':' -f2)'"' -i values/envs/prod.yaml
+            git add values/envs/prod.yaml
+            git commit -m "chore(prod): promote to $IMAGE"
+            git push origin auto-promote-prod --force
+            gh pr create \
+              --title "chore(prod): promote to \`$IMAGE\`" \
+              --body "🎯 **Production Promotion**\n\nPromote production to: \`$IMAGE\`\n\n- ✅ Deployed to dev\n- ✅ Promoted to qa\n- 🎯 Ready for prod" \
+              --base main \
+              --head auto-promote-prod
+          fi

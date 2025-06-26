@@ -1,0 +1,61 @@
+# values/envs/prod.yaml - Production environment overrides
+# clusterDomain: apps.prod.company.com
+
+# Production replica count for high availability
+replicaCount: 3
+
+# Production-grade image settings
+image:
+  pullPolicy: IfNotPresent
+
+# Keep extensive history for production rollbacks
+revisionHistoryLimit: 10
+
+# Production rollout strategy - manual promotion for safety
+rollout:
+  strategy:
+    blueGreen:
+      enabled: true
+      autoPromotionEnabled: false    # Manual promotion required
+      autoPromotionSeconds: 0        # No auto-promotion
+      scaleDownDelaySeconds: 300     # 5 minute delay before scaling down old version
+
+smokeTest:
+  enabled: true
+
+# Production-grade resource allocation
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 200m
+    memory: 512Mi
+
+# Conservative readiness probe for production stability
+readinessProbe:
+  initialDelaySeconds: 20    # Extra time for production startup
+  periodSeconds: 10          # Less frequent checks to reduce load
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+# Production liveness probe
+livenessProbe:
+  initialDelaySeconds: 30    # Give app time to fully initialize
+  periodSeconds: 30          # Less frequent checks
+  timeoutSeconds: 10
+  failureThreshold: 3
+
+# # Production-specific annotations
+# commonAnnotations:
+#   team: carbon
+#   project: t3aPaC
+#   environment: production
+#   criticality: high
+
+# # Production-specific labels  
+# podLabels:
+#   environment: production
+#   tier: production
+#   quality-gate: passed
+#   monitoring: enabled
