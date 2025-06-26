@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        env: [dev, qa]  # Add more if needed
+        env: [dev, qa, prod]  # Add more if needed
 
     steps:
       - name: Checkout code
