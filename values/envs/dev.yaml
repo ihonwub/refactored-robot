@@ -6,14 +6,13 @@ replicaCount: 2
 # Development-specific image settings
 image:
   pullPolicy: Always # Always pull latest in dev
-  tag: "363bab1aa99842b2f5a0d5a7f4b962e1066abc31" # Will be updated by CI
+  tag: "15c8e728ffd59b7256a2290b1e14277b6152b0bd" # Will be updated by CI
 # Keep more revision history for debugging
 revisionHistoryLimit: 3
 rollout:
   strategy:
     blueGreen:
       enabled: false # Use rolling update instead
-
 smokeTest:
   enabled: false # No smoke tests for rolling update
 # Higher resource limits for dev testing
