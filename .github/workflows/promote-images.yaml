@@ -25,8 +25,23 @@ jobs:
       - name: Get Commit Metadata
         id: commit-metadata
         run: |
-          pat='image: (.*)'; [[ "$(git notes show)" =~ $pat ]] && echo "IMAGE=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT || echo ''
-          pat='env: (.*)'; [[ "$(git notes show)" =~ $pat ]] && echo "ENV=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT || echo ''
+          if git notes show 2>/dev/null; then
+            NOTES_CONTENT=$(git notes show)
+            
+            # Extract image
+            if [[ "$NOTES_CONTENT" =~ image:\ (.*) ]]; then
+              echo "IMAGE=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+              echo "Found image: ${BASH_REMATCH[1]}"
+            fi
+            
+            # Extract environment
+            if [[ "$NOTES_CONTENT" =~ env:\ (.*) ]]; then
+              echo "ENV=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+              echo "Found env: ${BASH_REMATCH[1]}"
+            fi
+          else
+            echo "No git notes found"
+          fi
 
       - uses: fregante/setup-git-user@v1
         if: ${{ steps.commit-metadata.outputs.IMAGE }}

@@ -17,14 +17,14 @@ spec:
   analysis:
     successfulRunHistoryLimit: 2
     unsuccessfulRunHistoryLimit: 1  
-  {{- if .Values.rollout.strategy.blueGreen.enabled }}
   strategy:
+  {{- if .Values.rollout.strategy.blueGreen.enabled }}
     blueGreen:
       activeService: {{ template "rolloutdemo.fullname" . }}-active-{{ .Release.Namespace }}
       previewService: {{ template "rolloutdemo.fullname" . }}-preview-{{ .Release.Namespace }}
       autoPromotionEnabled: {{ .Values.rollout.strategy.blueGreen.autoPromotionEnabled }}
       autoPromotionSeconds: {{ .Values.rollout.strategy.blueGreen.autoPromotionSeconds }}
-      scaleDownDelaySeconds: {{ .Values.rollout.strategy.blueGreen.scaleDownDelaySeconds }}
+      scaleDownDelaySeconds: {{ .Values.rollout.strategy.blueGreen.scaleDownDelaySeconds | default 30 }}
     {{- if .Values.smokeTest.enabled }}
       prePromotionAnalysis:
         templates:
@@ -34,10 +34,16 @@ spec:
             value: {{ include "rolloutdemo.previewRouteHost" . }}
     {{- end }}
   {{- else }}
-  strategy:
-    rollingUpdate:
-      maxUnavailable: {{ .Values.rollout.strategy.rollingUpdate.maxUnavailable | default "25%" }}
-      maxSurge: {{ .Values.rollout.strategy.rollingUpdate.maxSurge | default "25%" }}
+    canary:
+      steps:
+      - setWeight: {{ .Values.rollout.strategy.canary.setWeight | default 20 }}
+      - pause: {}
+      - setWeight: {{ .Values.rollout.strategy.canary.setWeight2 | default 40 }}
+      - pause: { duration: {{ .Values.rollout.strategy.canary.pauseDuration | default "30s" }} }
+      - setWeight: {{ .Values.rollout.strategy.canary.setWeight3 | default 60 }}
+      - pause: { duration: {{ .Values.rollout.strategy.canary.pauseDuration | default "30s" }} }
+      - setWeight: {{ .Values.rollout.strategy.canary.setWeight4 | default 80 }}
+      - pause: { duration: {{ .Values.rollout.strategy.canary.pauseDuration | default "30s" }} }
   {{- end }}
   template:
     metadata:
