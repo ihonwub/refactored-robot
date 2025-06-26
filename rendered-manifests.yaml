@@ -1,0 +1,191 @@
+---
+# Source: rolloutdemo/templates/services.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: pac-rolloutdemo-active-dev
+  labels:
+    app: rolloutdemo
+    chart: rolloutdemo-0.1.0
+    release: pac
+    heritage: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: rolloutdemo
+    release: pac
+---
+# Source: rolloutdemo/templates/services.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: pac-rolloutdemo-preview-dev
+  labels:
+    app: rolloutdemo
+    chart: rolloutdemo-0.1.0
+    release: pac
+    heritage: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: rolloutdemo
+    release: pac
+---
+# Source: rolloutdemo/templates/routes.yaml
+### FOR OPENSHIFT CLUSTERS ONLY ###
+# This file defines the routes for the RolloutDemo application. 
+# ---
+# apiVersion: route.openshift.io/v1
+# kind: Route
+# metadata:
+#   name: pac-rolloutdemo-active-dev
+#   labels:
+#     app: rolloutdemo
+# spec:
+#   to:
+#     kind: Service
+#     name: pac-rolloutdemo-dev
+#   port:
+#     targetPort: http
+#   host: pac-rolloutdemo-active-dev.dev.svc.cluster.local:8080
+#   tls:
+#     termination: edge
+# ---
+# apiVersion: route.openshift.io/v1
+# kind: Route
+# metadata:
+#   name: pac-rolloutdemo-preview-dev
+#   labels:
+#     app: rolloutdemo
+# spec:
+#   to:
+#     kind: Service
+#     name: pac-rolloutdemo-preview-dev
+#   port:
+#     targetPort: http
+#   host: pac-rolloutdemo-preview-dev.dev.svc.cluster.local:8080
+#   tls:
+#     termination: edge
+---
+# Source: rolloutdemo/templates/analysis-template.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: pac-rolloutdemo-smoke-test
+  labels:
+    app.kubernetes.io/name: pac-rolloutdemo
+    helm.sh/chart: rolloutdemo-0.1.0
+    app.kubernetes.io/instance: pac
+    app.kubernetes.io/managed-by: Helm
+spec:
+  args:
+    - name: route-host
+  metrics:
+    - name: smoke-test
+      provider:
+        job:
+          spec:
+            ttlSecondsAfterFinished: 300
+            backoffLimit: 2
+            template:
+              spec:
+                restartPolicy: Never
+                containers:
+                  - name: curl-test
+                    image: curlimages/curl:latest
+                    command:
+                      - sh
+                      - -c
+                      - |
+                        echo "Waiting for 10 seconds before starting the health check..."
+                        sleep 10  # Reduced wait time since service should be ready
+                        echo "Starting health check..."
+                        echo "Attempting to reach http://$ROUTE_HOST/"
+                        
+                        for i in {1..5}; do
+                          echo "Attempt $i/5..."
+                          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 --max-time 10 http://$ROUTE_HOST/)
+                          echo "Status: $STATUS"
+                          if [ "$STATUS" = "200" ]; then
+                            echo "PASS - Health check successful"
+                            exit 0
+                          fi
+                          echo "Retrying in 5s..."
+                          sleep 5
+                        done
+                        echo "FAIL - Health check failed after 5 attempts"
+                        exit 1
+                    env:
+                      - name: ROUTE_HOST
+                        value: "{{args.route-host}}"
+---
+# Source: rolloutdemo/templates/rollout.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: pac-rolloutdemo
+  labels:
+    app: rolloutdemo
+    chart: rolloutdemo-0.1.0
+    release: pac
+    heritage: Helm
+spec:
+  replicas: 2
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: rolloutdemo
+      release: pac
+  analysis:
+    successfulRunHistoryLimit: 2
+    unsuccessfulRunHistoryLimit: 1  
+  strategy:
+    canary:
+      steps:
+      - setWeight: 20
+      - pause: { duration: 30s }
+      - setWeight: 40
+      - pause: { duration: 30s }
+      - setWeight: 60
+      - pause: { duration: 30s }
+      - setWeight: 80
+      - pause: { duration: 30s }
+  template:
+    metadata:
+      labels:
+        app: rolloutdemo
+        release: pac
+    spec:
+      containers:
+        - name: rolloutdemo
+          image: "ghcr.io/ihonwub/curly-spork:363bab1aa99842b2f5a0d5a7f4b962e1066abc31"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
