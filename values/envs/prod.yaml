@@ -6,7 +6,7 @@ replicaCount: 3
 # Production-grade image settings
 image:
   pullPolicy: IfNotPresent
-  tag: 8b3b8a0c20be1886fbd92b63fdc8a266bdbbc8df
+  tag: dd8f160ea514c068a1d6273ba69a57ccc6deaba2
 # Keep extensive history for production rollbacks
 revisionHistoryLimit: 10
 # Production rollout strategy - manual promotion for safety
