@@ -6,7 +6,7 @@ replicaCount: 2
 # Development-specific image settings
 image:
   pullPolicy: Always # Always pull latest in dev
-  tag: "888d8d8a7e14fb863f35734d07c798848031b874" # Will be updated by CI
+  tag: "dd8f160ea514c068a1d6273ba69a57ccc6deaba2" # Will be updated by CI
 # Keep more revision history for debugging
 revisionHistoryLimit: 3
 rollout:
