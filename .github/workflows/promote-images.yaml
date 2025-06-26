@@ -1,4 +1,3 @@
-# .github/workflows/promote-images.yml
 name: Promote Image Changes
 on:
   push:
@@ -6,6 +5,7 @@ on:
       - main
 
 jobs:
+
   promote-image-change:
     runs-on: ubuntu-latest
     permissions:
@@ -25,6 +25,7 @@ jobs:
           pat='image: (.*)'; [[ "$(git notes show)" =~ $pat ]] && echo "::set-output name=IMAGE::${BASH_REMATCH[1]}" || echo ''
           pat='env: (.*)'; [[ "$(git notes show)" =~ $pat ]] && echo "::set-output name=ENV::${BASH_REMATCH[1]}" || echo ''
 
+
       - uses: fregante/setup-git-user@v1
         if: ${{ steps.commit-metadata.outputs.IMAGE }}
 
@@ -37,7 +38,7 @@ jobs:
       - name: Promote Image Change
         if: ${{ steps.commit-metadata.outputs.IMAGE }}
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.DEPLOY_PAT }}
         run: |
           IMAGE=${{ steps.commit-metadata.outputs.IMAGE }}
           ENV="${{ steps.commit-metadata.outputs.ENV || 'dev' }}"
