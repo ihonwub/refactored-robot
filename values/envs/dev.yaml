@@ -3,28 +3,22 @@
 
 # Higher replica count for dev testing
 replicaCount: 2
-
 # Development-specific image settings
 image:
-  pullPolicy: Always  # Always pull latest in dev
+  pullPolicy: Always # Always pull latest in dev
   repository: ghcr.io/ihonwub/curly-spork
-  tag: "50eef20394992c91b8afa299d7735f1bd9b15b88" # Will be updated by CI
-  
-
+  tag: "f1dce09c362d359963e273ae9196be6b3bb5a99d" # Will be updated by CI
 # Keep more revision history for debugging
 revisionHistoryLimit: 3
-
 rollout:
   strategy:
     blueGreen:
-      enabled: false  # Use rolling update instead
+      enabled: false # Use rolling update instead
     rollingUpdate:
       maxUnavailable: "50%"
       maxSurge: "50%"
-
 smokeTest:
-  enabled: false  # No smoke tests for rolling update
-
+  enabled: false # No smoke tests for rolling update
 # Higher resource limits for dev testing
 resources:
   limits:
@@ -33,7 +27,6 @@ resources:
   requests:
     cpu: 100m
     memory: 128Mi
-
 # # Development-specific annotations
 # commonAnnotations:
 #   team: carbon
