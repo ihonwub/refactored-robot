@@ -97,17 +97,6 @@ The ApplicationSet (`rolloutsdemo-appset.yaml`) automatically creates ArgoCD app
 - **Sync Policy**: Automated with prune and self-heal enabled
 - **Namespaces**: Environment-specific (`dev`, `qa`, `prod`)
 
-## Deployment Strategies
-
-### Blue/Green Deployment (QA & Production)
-- **QA**: Automated promotion after 30 seconds
-- **Production**: Manual promotion required for safety
-- **Smoke Tests**: Enabled for pre-promotion validation
-- **Rollback**: Quick rollback capability with extensive revision history
-
-### Rolling Update (Development)
-- **Strategy**: Standard Kubernetes rolling update
-- **Purpose**: Fast iteration and testing in development environment
 
 ## Git Notes for Metadata Tracking
 
@@ -167,21 +156,5 @@ The configuration includes comprehensive health checks:
 - **Readiness Probes**: Traffic routing decisions
 - **Rollout Analysis**: Automated success/failure detection during deployments
 
-## Contributing
 
-1. Make changes to the Helm chart or values files
-2. Push to `main` branch to trigger manifest rendering
-3. For image updates, ensure Git notes contain proper metadata
-4. Production changes require PR approval
-
-## References and Resources
-
-This implementation was inspired by and builds upon the following excellent resources:
-
-- **[Argo Rollouts Workshop](https://openshiftdemos.github.io/argo-rollouts-workshop/argo-rollouts-workshop/main/index.html)** - Comprehensive workshop on Argo Rollouts deployment strategies and best practices
-- **[The Rendered Manifests Pattern](https://akuity.io/blog/the-rendered-manifests-pattern)** - Akuity blog post explaining the pattern used for environment-specific manifest rendering
-- **[GitOps and Argo CD](https://youtu.be/aRKrDmqYLCE?si=-DqfHmyR8sEuE0l9)** - Video tutorial covering GitOps principles and ArgoCD implementation patterns
-
----
-
-This GitOps demo showcases enterprise-ready practices for automated, safe, and traceable deployments across multiple environments.
+This GitOps demo showcases best practices for automated, safe, and traceable deployments across multiple environments.
