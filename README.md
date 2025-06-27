@@ -1,15 +1,17 @@
-# Refactored Robot - GitOps Demo
+# Refactored Robot - GitOps Demo POC
 
-A demonstration of GitOps practices using ArgoCD with Argo Rollouts for advanced deployment strategies across multiple environments.
+A proof-of-concept demonstrating GitOps practices using ArgoCD with Argo Rollouts for automated multi-environment deployments.
 
 ## Overview
 
-This repository showcases a complete GitOps workflow that automatically promotes container images through development, QA, and production environments using:
+This demo repository showcases an automated GitOps workflow that promotes container images through dev → QA → production environments using:
 
 - **ArgoCD ApplicationSets** for multi-environment management
-- **Argo Rollouts** for advanced deployment strategies (Blue/Green and Canary)
-- **Automated image promotion** with commit tracking via Git notes
-- **Helm templating** for environment-specific configurations
+- **Argo Rollouts** for Blue/Green and Canary deployment strategies
+- **Automated image promotion** with Git notes metadata tracking
+- **Rendered manifests pattern** for environment-specific configurations
+
+**Image Source**: Container images are built and pushed from the [curly-spork repository](https://github.com/ihonwub/curly-spork). Changes to that repository trigger new builds that flow through this promotion pipeline.
 
 ## Repository Structure
 
@@ -37,124 +39,55 @@ This repository showcases a complete GitOps workflow that automatically promotes
     └── render-manifests.yaml    # Helm manifest rendering workflow
 ```
 
-## Automated Workflows
+## How It Works
 
-### 1. Image Promotion Pipeline (`promote-images.yaml`)
+### Image Promotion Pipeline
+1. **Trigger**: New images built in [curly-spork](https://github.com/ihonwub/curly-spork) are promoted via Git notes metadata
+2. **Dev → QA**: Automatic promotion with direct commit
+3. **QA → Prod**: Creates pull request requiring manual approval
 
-This workflow automatically promotes container images between environments based on Git notes metadata:
+### Rendered Manifests Pattern
+- Helm templates rendered to environment-specific branches (`env/dev`, `env/qa`, `env/prod`)
+- ArgoCD monitors each branch for automatic deployment
+- Environment isolation with dedicated namespaces
 
-- **Trigger**: Push to `main` branch
-- **Metadata Extraction**: Reads Git notes for image and environment information
-- **Dev → QA Promotion**: Automatically updates QA environment and commits changes
-- **QA → Prod Promotion**: Creates pull request for manual review and approval
-
-#### Key Features:
-
-- Uses Git notes to track image metadata: `image: ghcr.io/ihonwub/curly-spork:tag` and `env: environment`
-- Automatic promotion from dev to QA with direct commit
-- Manual approval required for production deployments via pull requests
-- Preserves Git notes across promotions for full traceability
-
-#### Promotion Flow:
-```
-Dev Environment → (Auto) → QA Environment → (Manual PR) → Production
-```
-
-### 2. Manifest Rendering (`render-manifests.yaml`)
-
-Renders Helm templates for each environment and commits to dedicated branches:
-
-- **Environments**: dev, qa, prod (matrix strategy)
-- **Output**: Renders manifests to `env/{environment}` branches
-- **Validation**: Ensures rendered YAML is valid before committing
-- **ArgoCD Integration**: Each environment branch is monitored by ArgoCD applications
-
-## Environment Configuration
-
-### Common Configuration (`values.common.yaml`)
-- Base image: `ghcr.io/ihonwub/curly-spork`
-- Rollout strategies (Blue/Green and Canary)
-- Resource limits and probes
-- Service configuration
-
-### Environment-Specific Overrides
-
-| Environment | Replicas | Strategy | Auto-Promotion | Resources |
-|-------------|----------|----------|----------------|-----------|
-| **Dev** | 2 | Rolling Update | N/A | 200m CPU, 256Mi RAM |
-| **QA** | 2 | Blue/Green | Enabled (30s) | 300m CPU, 512Mi RAM |
-| **Prod** | 3 | Blue/Green | Disabled (Manual) | 500m CPU, 1Gi RAM |
-
-## ArgoCD Integration
-
-### Application Bootstrap
-The `apps.yaml` file implements the "app-of-apps" pattern, creating a bootstrap application that manages the ApplicationSet.
-
-### ApplicationSet Configuration
-The ApplicationSet (`rolloutsdemo-appset.yaml`) automatically creates ArgoCD applications for each environment:
-
-- **Source**: Environment-specific branches (`env/dev`, `env/qa`, `env/prod`)
-- **Sync Policy**: Automated with prune and self-heal enabled
-- **Namespaces**: Environment-specific (`dev`, `qa`, `prod`)
-
-
-## Git Notes for Metadata Tracking
-
-The system uses Git notes to track deployment metadata:
-
+### Git Notes Tracking
 ```bash
-# Example Git notes content
+# Example metadata attached to commits
 image: ghcr.io/ihonwub/curly-spork:dd8f160ea514c068a1d6273ba69a57ccc6deaba2
 env: qa
 ```
 
-This enables:
-- **Traceability**: Track which image versions are deployed where
-- **Automation**: Trigger appropriate promotion workflows
-- **Auditability**: Full history of deployments and promotions
+## Environment Configuration
 
-## Getting Started
+| Environment | Strategy | Auto-Promotion | Resources |
+|-------------|----------|----------------|-----------|
+| **Dev** | Rolling Update | N/A | 200m CPU, 256Mi RAM |
+| **QA** | Blue/Green | 30s delay | 300m CPU, 512Mi RAM |
+| **Prod** | Blue/Green | Manual only | 500m CPU, 1Gi RAM |
+
+## Quick Start
 
 ### Prerequisites
-- ArgoCD installed in your Kubernetes cluster
-- Argo Rollouts controller installed
-- GitHub repository access with appropriate secrets configured
+- ArgoCD + Argo Rollouts installed
+- GitHub PAT configured as `DEPLOY_PAT` secret
 
 ### Setup
+1. Apply `apps.yaml` to your ArgoCD namespace
+2. Push changes trigger manifest rendering and deployment
+3. Image updates from [curly-spork](https://github.com/ihonwub/curly-spork) flow through promotion pipeline
 
-1. **Configure Secrets**: Ensure `DEPLOY_PAT` secret is configured in GitHub Actions
-2. **Install Bootstrap App**: Apply the `apps.yaml` to your ArgoCD namespace
-3. **Initial Deployment**: Push changes to trigger the manifest rendering workflow
+### Production Promotion
+Production deployments require manual approval via pull request review and merge.
 
-### Manual Operations
+## References
 
-#### Promote to Production
-1. The promotion workflow creates a PR for production deployments
-2. Review the changes in the pull request
-3. Merge the PR to deploy to production
-4. ArgoCD will automatically sync the changes
+This POC was built using these resources:
 
-#### Rollback
-Use ArgoCD UI or CLI to rollback to previous revisions:
-```bash
-argocd app rollback rollout-prod --revision 2
-```
+- **[Argo Rollouts Workshop](https://openshiftdemos.github.io/argo-rollouts-workshop/argo-rollouts-workshop/main/index.html)** - Deployment strategies and best practices
+- **[The Rendered Manifests Pattern](https://akuity.io/blog/the-rendered-manifests-pattern)** - Environment-specific manifest rendering approach
+- **[GitOps and Argo CD](https://youtu.be/aRKrDmqYLCE?si=-DqfHmyR8sEuE0l9)** - GitOps principles and ArgoCD patterns
 
-## Security and Best Practices
+---
 
-- **Manual Production Approval**: Production deployments require manual review
-- **Smoke Tests**: Automated validation before promotion in critical environments
-- **Resource Limits**: Environment-appropriate resource allocation
-- **Namespace Isolation**: Each environment runs in its own namespace
-- **Revision History**: Configurable retention for rollback capabilities
-
-## Monitoring and Observability
-
-The configuration includes comprehensive health checks:
-
-- **Liveness Probes**: Application health monitoring
-- **Readiness Probes**: Traffic routing decisions
-- **Rollout Analysis**: Automated success/failure detection during deployments
-
-
-This GitOps demo showcases best practices for automated, safe, and traceable deployments across multiple environments.
+*This is a proof-of-concept demonstration of GitOps practices for educational and demo purposes.*
